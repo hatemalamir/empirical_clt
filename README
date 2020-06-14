@@ -1,0 +1,51 @@
+News Reader!
+
+If you, like me, want to know what is happening outside your small place where you spend most of the time behind your laptop screen, you most propable bookmark one of those websites with three or four letter icons, or have their mobile app thumbanil next to Facebook or, may be, LinkedIn.
+Also, you may know that some people make big money out of reading and analyzing the news! Shouldn't be a surprise, right?
+
+If the news themselves are increazingly digitized, it makes more sense to read and analyze them using computers! Big computers! At scale!
+
+That's exactly what we're trying to "simulate" in this project!
+
+
+[1] Recipe:
+	- Cloudera Quick Start 5.13. Separate componensts listed below.
+	- Apache Hadoop 1.6.0
+	- Apache Spark 2.10 (Core, Streaming, and SQL)
+	- Apache Kafka 2.11
+	- Scala 2.10.5
+	- Python 3.7.7
+	- The bunch of files in this repo. Obviously!
+
+[2] Utensil kit:
+	- IntelliJ IDEA - Community Edition
+
+[3] Steps:
+	$ python read_newsapi.py
+	This command will hit newsapi.org every hour to get top-news and write them to a kafka topic named 'news'.
+	This files connects to a Kafka broker at quickstart.cloudera:9092. You might need to change that in the above file to refer to your <kafka host>:<kafka port>
+
+	$ spark-submit --class KafkaNewsConsumer --master local finalproject/target/uber-finalproject-1.0-SNAPSHOT.jar quickstart.cloudera:9092 my-group-id news
+	This command does the real majic behind the scenes. It subscribes to the 'news' Kafka topic, reads new entries, and pushes them to Hive.
+
+	$ ipython read_articles_kafka.py
+	This will run the script that reads the saved articles from Hive, and draw a couple of graphs.
+
+[4] What's really going on there:
+	Glad you asked! Just bear with me!
+	
+	It all begins with a handy-dandy website, https://newsapi.org! Just sign-up, get an API token, and use it to hit http://newsapi.org/v2/top-headlines?country=<any country>&apiKey=<The token you've just got>. It will return a big, fat JSON object with top headlines.
+	We usd python to make that HTTP hit, parse the returned JSON object, and push article-by-article to Kafka, on a topic called 'news'.
+	Check the code in read_newsapi.py!
+
+	The next step is to take the newly written articles to Hive. Easy as it sounds! Actually, Apache Spark Streaming, and Apache Spark SQL do a great job here! Just a few lines of code makes it!
+	You just create a Spark Streaming context, configure it to point to kafka, and it will periodically check the configured Kafka topic for new entries and gives back a stream of events.
+	Now Spark SQL comes into usage. It takes every batch of events and inserts them into Hive under a predefined table. That table is called 'article', unsurprisingly, and consists of all the fields in the article JSON object initially returned from newsapi.org.
+	We used Scala for this part because only Java, Scala, and Python APIs available for Spark Straming, and Scala has the best of both worlds, Python and Java, beauty and performance. Specially that Spark itself is written in Scala.
+	If you've the guts, check KafkaNewsConsumer and NewsParser under src/main/scala/
+
+	The last part is the fun part, actually. We finally get to "see" something other than the intimidating command line!
+	We first need to read the last day's headlines from Hive. And that was done very easily using PyHive. Then, we counted the number of articles per hour, and drew a beutiful line graph. We then counted the most frequent words in those articles and drew a horizontal bar graph.
+	NOTE: to refresh the graphs, you need to get back to the terminal, type in 'r' or 'R', then <ENTER>.
+	Enjoy reading read_articles_hive.py!
+

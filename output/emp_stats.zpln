@@ -1,0 +1,250 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%spark\nval INPUT_DIR=\"hdfs://172.17.0.2:8020/user/cloudera/output/bd/proj2/spark\"\ncase class Record(department:String, sampleFraction:Double, avgError:Double)",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-14T15:48:26-0500",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mINPUT_DIR\u001b[0m: \u001b[1m\u001b[32mString\u001b[0m = hdfs://172.17.0.2:8020/user/cloudera/output/bd/proj2/spark\ndefined class Record\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1592162778525_1798436351",
+      "id": "paragraph_1592162778525_1798436351",
+      "dateCreated": "2020-06-14T14:26:18-0500",
+      "dateStarted": "2020-06-14T15:48:26-0500",
+      "dateFinished": "2020-06-14T15:48:26-0500",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:44397"
+    },
+    {
+      "text": "%spark\n\n\nval avgErrCsv = sc.textFile(INPUT_DIR + \"/emp_stats_avg/part-00000\")\n\nvar avgErrDf = avgErrCsv.map(line => line.split(\",\").map(_.trim)).map(rec => Record(rec(0), rec(1).toDouble, rec(2).toDouble)).toDF\n\nfor(i <- 1 to 7)\n    avgErrDf = avgErrDf.union(sc.textFile(INPUT_DIR + \"/emp_stats_avg/part-0000\" + i).map(line => line.split(\",\").map(_.trim)).map(rec => Record(rec(0), rec(1).toDouble, rec(2).toDouble)).toDF)\n    \navgErrDf.createOrReplaceTempView(\"AVG_ERR_DF\")",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-14T15:48:26-0500",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[1m\u001b[34mavgErrCsv\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.rdd.RDD[String]\u001b[0m = hdfs://172.17.0.2:8020/user/cloudera/output/bd/proj2/spark/emp_stats_avg/part-00000 MapPartitionsRDD[944] at textFile at <console>:43\n\u001b[1m\u001b[34mavgErrDf\u001b[0m: \u001b[1m\u001b[32morg.apache.spark.sql.DataFrame\u001b[0m = [department: string, sampleFraction: double ... 1 more field]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1592161816269_1913593009",
+      "id": "paragraph_1592161816269_1913593009",
+      "dateCreated": "2020-06-14T14:10:16-0500",
+      "dateStarted": "2020-06-14T15:48:26-0500",
+      "dateFinished": "2020-06-14T15:48:27-0500",
+      "status": "FINISHED",
+      "$$hashKey": "object:44398"
+    },
+    {
+      "text": "%sql\nselect department, sampleFraction, avgError from avg_err_df order by department, sampleFraction",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-14T15:51:22-0500",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "lineChart",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "sampleFraction": "string",
+                      "avgError": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "lineChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "sampleFraction",
+                  "index": 1,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [
+                {
+                  "name": "department",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ],
+              "values": [
+                {
+                  "name": "avgError",
+                  "index": 2,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/sql"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://172.19.140.103:4040/jobs/job?id=79",
+              "$$hashKey": "object:45849"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1592167054418_2007608159",
+      "id": "paragraph_1592167054418_2007608159",
+      "dateCreated": "2020-06-14T15:37:34-0500",
+      "dateStarted": "2020-06-14T15:51:08-0500",
+      "dateFinished": "2020-06-14T15:51:09-0500",
+      "status": "FINISHED",
+      "$$hashKey": "object:44399",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "department\tsampleFraction\tavgError\nAVIATION\t0.1\t6.901948851274435\nAVIATION\t0.2\t4.492721485023369\nAVIATION\t0.30000000000000004\t1.5407063391838918\nAVIATION\t0.4\t1.1123209045091087\nAVIATION\t0.5\t0.4205952734592769\nAVIATION\t0.6\t0.1875314982218159\nAVIATION\t0.7\t0.3259088700843804\nAVIATION\t0.7999999999999999\t1.1656701184573446\nAVIATION\t0.8999999999999999\t1.2995215729861833\nFINANCE\t0.1\t8.101687878379689\nFINANCE\t0.2\t6.276215318329848\nFINANCE\t0.30000000000000004\t0.3640702361624663\nFINANCE\t0.4\t4.3505257300638185\nFINANCE\t0.5\t0.09768027929826409\nFINANCE\t0.6\t1.0147990151503201\nFINANCE\t0.7\t1.9248429858058256\nFINANCE\t0.7999999999999999\t1.1021577857304743\nFINANCE\t0.8999999999999999\t3.7790575143354515\nFIRE\t0.1\t1.2323706488313273\nFIRE\t0.2\t0.7236840903541125\nFIRE\t0.30000000000000004\t0.6250312590421078\nFIRE\t0.4\t0.07455194929395166\nFIRE\t0.5\t0.1735139353185132\nFIRE\t0.6\t0.6942823313584897\nFIRE\t0.7\t0.5178149337984836\nFIRE\t0.7999999999999999\t0.026067270059613224\nFIRE\t0.8999999999999999\t0.10775258385692887\nHEALTH\t0.1\t2.7925875177457593\nHEALTH\t0.2\t0.319767125342307\nHEALTH\t0.30000000000000004\t2.582804688928847\nHEALTH\t0.4\t0.4659971726082914\nHEALTH\t0.5\t0.34700892508862635\nHEALTH\t0.6\t0.9194914842355851\nHEALTH\t0.7\t1.208685021407618\nHEALTH\t0.7999999999999999\t0.877509166792524\nHEALTH\t0.8999999999999999\t1.2725937940347807\nLAW\t0.1\t0.120230265384841\nLAW\t0.2\t9.215908246748844\nLAW\t0.30000000000000004\t6.055464020137291\nLAW\t0.4\t1.8417423929416459\nLAW\t0.5\t0.943293165596399\nLAW\t0.6\t1.3491880454009104\nLAW\t0.7\t0.4988503716441553\nLAW\t0.7999999999999999\t0.7662043771727719\nLAW\t0.8999999999999999\t0.051522921992385125\nOEMC\t0.1\t1.8822518165999673\nOEMC\t0.2\t1.3859175163691013\nOEMC\t0.30000000000000004\t2.0843779710254804\nOEMC\t0.4\t3.1289794761630048\nOEMC\t0.5\t0.3614955053228922\nOEMC\t0.6\t1.7511592141873333\nOEMC\t0.7\t1.995390618755024\nOEMC\t0.7999999999999999\t0.5083634243917416\nOEMC\t0.8999999999999999\t0.4451304294262632\nPOLICE\t0.1\t0.023939807037495937\nPOLICE\t0.2\t0.8153943495128826\nPOLICE\t0.30000000000000004\t0.2404519300419399\nPOLICE\t0.4\t0.13420564640293328\nPOLICE\t0.5\t0.290494060363755\nPOLICE\t0.6\t0.16012100283745406\nPOLICE\t0.7\t0.07521760117024574\nPOLICE\t0.7999999999999999\t0.21578312941192165\nPOLICE\t0.8999999999999999\t0.08136863733873842\nPUBLIC LIBRARY\t0.1\t0.8107782784181163\nPUBLIC LIBRARY\t0.2\t0.38253371653293494\nPUBLIC LIBRARY\t0.30000000000000004\t0.5447223643872654\nPUBLIC LIBRARY\t0.4\t2.9675959716504106\nPUBLIC LIBRARY\t0.5\t2.488664472754343\nPUBLIC LIBRARY\t0.6\t0.8906093577599884\nPUBLIC LIBRARY\t0.7\t3.177638422185256\nPUBLIC LIBRARY\t0.7999999999999999\t1.5174254837518186\nPUBLIC LIBRARY\t0.8999999999999999\t0.8965391653607794\nTRANSPORTN\t0.1\t1.7061357812926519\nTRANSPORTN\t0.2\t0.14438516661849576\nTRANSPORTN\t0.30000000000000004\t0.8045802268064126\nTRANSPORTN\t0.4\t4.4030942177327\nTRANSPORTN\t0.5\t0.4320865283978211\nTRANSPORTN\t0.6\t1.723840509449878\nTRANSPORTN\t0.7\t1.3224944912867296\nTRANSPORTN\t0.7999999999999999\t1.7403594042028956\nTRANSPORTN\t0.8999999999999999\t1.3559328938509922\nWATER MGMNT\t0.1\t2.239112470933129\nWATER MGMNT\t0.2\t4.350831016267797\nWATER MGMNT\t0.30000000000000004\t0.16622624138236103\nWATER MGMNT\t0.4\t0.8104146554505245\nWATER MGMNT\t0.5\t0.3586130991403912\nWATER MGMNT\t0.6\t0.4297918803490517\nWATER MGMNT\t0.7\t2.4605704690419876\nWATER MGMNT\t0.7999999999999999\t1.2110038333761979\nWATER MGMNT\t0.8999999999999999\t0.09598811264097964\n"
+          }
+        ]
+      }
+    },
+    {
+      "text": "%sql\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-14T15:49:41-0500",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/sql"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1592167781523_-1549976097",
+      "id": "paragraph_1592167781523_-1549976097",
+      "dateCreated": "2020-06-14T15:49:41-0500",
+      "status": "READY",
+      "focus": true,
+      "$$hashKey": "object:45369"
+    }
+  ],
+  "name": "emp_stats",
+  "id": "2F9X8EJX1",
+  "defaultInterpreterGroup": "spark",
+  "version": "0.9.0-preview1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/emp_stats"
+}
