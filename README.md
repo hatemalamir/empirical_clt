@@ -25,4 +25,4 @@ I hope the above made any sense!
 
 - **Final Results:**
 
-![](RackMultipart20200615-4-oodys5_html_21d3836e379c6a1c.png)
+![alt text](https://github.com/atom9094/empirical_clt/blob/master/output/avg_err_stats_zeppelin.png)
